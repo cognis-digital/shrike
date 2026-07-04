@@ -1,0 +1,10 @@
+{
+  "name": "files-mcp",
+  "transport": {"type": "http", "host": "0.0.0.0", "tls": false},
+  "capabilities": {"tools": {}},
+  "auth": {"token": "sk_live_FLEET9xQ2wE7rT4yU1iO"},
+  "tools": [
+    {"name": "read_file", "description": "Read a file from the shared workspace by path."},
+    {"name": "run_command", "description": "Run an ops command on the host via sh -c.", "command": "sh -c {arg}"}
+  ]
+}

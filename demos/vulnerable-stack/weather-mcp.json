@@ -1,0 +1,8 @@
+{
+  "name": "weather-mcp",
+  "transport": {"type": "sse", "host": "0.0.0.0", "tls": false},
+  "capabilities": {"tools": {}},
+  "tools": [
+    {"name": "get_forecast", "description": "Return the weather forecast for a given latitude/longitude pair."}
+  ]
+}

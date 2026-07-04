@@ -1,0 +1,9 @@
+{
+  "name": "jira-mcp",
+  "transport": "stdio",
+  "auth": "oauth2",
+  "capabilities": {"tools": {"list": true}},
+  "tools": [
+    {"name": "search_tickets", "description": "Search Jira tickets by JQL query in project ENGR."}
+  ]
+}
