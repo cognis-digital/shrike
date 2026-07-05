@@ -9,6 +9,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
 DEMO = os.path.join(ROOT, "demos", "vulnerable-stack")
+N_SERVERS = len([f for f in os.listdir(DEMO) if f.endswith(".json")])
 
 from shrike import atlas, fix, triage           # noqa: E402
 from shrike.agent import audit                   # noqa: E402
@@ -23,7 +24,7 @@ def result():
 
 class TestAudit:
     def test_finds_all_servers(self, result):
-        assert len(result.servers) == 4
+        assert len(result.servers) == N_SERVERS
 
     def test_finds_criticals(self, result):
         assert result.stats["critical"] >= 1
@@ -74,7 +75,7 @@ class TestAtlas:
 class TestReportFormats:
     def test_all_formats_render(self, result):
         assert "AI-stack security audit" in report_mod.terminal(result)
-        assert json.loads(report_mod.to_json(result))["stats"]["servers"] == 4
+        assert json.loads(report_mod.to_json(result))["stats"]["servers"] == N_SERVERS
         assert report_mod.to_markdown(result).startswith("# shrike")
         assert json.loads(report_mod.to_sarif(result))["version"] == "2.1.0"
 
@@ -86,8 +87,8 @@ class TestCli:
     def test_discover_runs_clean(self, capsys):
         assert main(["discover", DEMO]) == 0
         out = json.loads(capsys.readouterr().out)
-        assert len(out["manifests"]) == 4
+        assert len(out["manifests"]) == N_SERVERS
 
     def test_scan_json(self, capsys):
         main(["scan", DEMO, "-f", "json"])
-        assert json.loads(capsys.readouterr().out)["stats"]["servers"] == 4
+        assert json.loads(capsys.readouterr().out)["stats"]["servers"] == N_SERVERS

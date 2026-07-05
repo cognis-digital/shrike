@@ -1,0 +1,38 @@
+{
+  "category": "data_exfiltration",
+  "description": "Instructions or markers that try to route data off-box (classic indirect-injection payloads).",
+  "atlas": "AML.T0025",
+  "owasp": "LLM02",
+  "signatures": [
+    {
+      "id": "EX001",
+      "severity": "high",
+      "name": "Instruction to send data to an external URL",
+      "pattern": "(?i)\\b(send|post|upload|exfiltrate|transmit|forward)\\b[^.\\n]{0,40}\\b(to\\s+)?https?://"
+    },
+    {
+      "id": "EX002",
+      "severity": "high",
+      "name": "Markdown image beacon (data smuggled in URL)",
+      "pattern": "!\\[[^\\]]*\\]\\(https?://[^)\\s]+[?&][^)\\s]*=[^)\\s]*\\)"
+    },
+    {
+      "id": "EX003",
+      "severity": "medium",
+      "name": "Instruction to encode secrets before sending",
+      "pattern": "(?i)\\b(base64|hex|url-?encode|encode)\\b[^.\\n]{0,30}\\b(the\\s+)?(secret|token|key|content|data|conversation)\\b"
+    },
+    {
+      "id": "EX004",
+      "severity": "high",
+      "name": "Append conversation/context to an outbound request",
+      "pattern": "(?i)\\b(append|include|attach)\\b[^.\\n]{0,30}\\b(the\\s+)?(conversation|chat\\s*history|previous\\s+messages|system\\s+prompt)\\b[^.\\n]{0,30}(to|in)\\s+the\\s+(url|request|quer(y|ies))"
+    },
+    {
+      "id": "EX005",
+      "severity": "medium",
+      "name": "DNS/webhook exfil hint",
+      "pattern": "(?i)\\b(dns|nslookup|webhook\\.site|requestbin|burpcollaborator|interact\\.sh|oast)\\b"
+    }
+  ]
+}

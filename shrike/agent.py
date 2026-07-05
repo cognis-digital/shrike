@@ -11,8 +11,17 @@ from typing import Any, Dict, List, Optional
 from . import engine, triage, atlas, fix
 from .discover import discover
 from .llm import LocalModel
+from .sigs import Library as SigLibrary
 
 _SEV_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
+_SIGLIB_CACHE = None
+
+
+def _siglib() -> SigLibrary:
+    global _SIGLIB_CACHE
+    if _SIGLIB_CACHE is None:
+        _SIGLIB_CACHE = SigLibrary()
+    return _SIGLIB_CACHE
 
 
 @dataclass
@@ -77,6 +86,7 @@ def audit(path: Optional[str] = None, scan_clients: bool = True,
 
     correlations = triage.correlate(items)
 
+    siglib = _siglib()
     servers: List[ServerAudit] = []
     for it in items:
         enriched = []
@@ -86,6 +96,23 @@ def audit(path: Optional[str] = None, scan_clients: bool = True,
                              "location": f.location, "remediation": f.remediation,
                              "atlas": lbl, "owasp": lbl["owasp_id"],
                              "blast": triage.blast_radius(f.rule, f.severity, it["manifest"])})
+        # content scan: run the signature library over tool names + descriptions to catch
+        # prompt-injection / tool-poisoning that a structural check can't see.
+        for tool in (it["manifest"].get("tools") or []):
+            text = (tool.get("name", "") + "\n" + tool.get("description", "")).strip()
+            if not text:
+                continue
+            for m in siglib.scan_text(text):
+                s = m.signature
+                enriched.append({
+                    "rule": f"content.{s.category}.{s.id}", "severity": s.severity,
+                    "message": f"{s.name} in tool '{tool.get('name','?')}' description: \"{m.excerpt}\"",
+                    "location": f"tools[{tool.get('name','?')}].description", "remediation":
+                    "Treat tool descriptions as untrusted input; sanitize or reject servers whose "
+                    "tool metadata carries model-directed instructions.",
+                    "atlas": {"atlas_id": s.atlas, "atlas_name": "", "owasp_id": s.owasp, "owasp_name": ""},
+                    "owasp": s.owasp,
+                    "blast": triage.blast_radius("tool.injection_in_description", s.severity, it["manifest"])})
         servers.append(ServerAudit(
             name=it["name"], source=it["source"], manifest=it["manifest"],
             findings=enriched, score=it["report"].score,

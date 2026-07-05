@@ -1,0 +1,18 @@
+{
+  "category": "obfuscation",
+  "description": "Encoding and smuggling tricks used to hide injected instructions from humans and naive filters.",
+  "atlas": "AML.T0051",
+  "owasp": "LLM01",
+  "signatures": [
+    {"id": "OB001", "severity": "high", "name": "Unicode tag-character smuggling (invisible instructions)",
+     "pattern": "[\\U000E0000-\\U000E007F]"},
+    {"id": "OB002", "severity": "medium", "name": "Zero-width / bidi control characters",
+     "pattern": "[\\u200b\\u200c\\u200d\\u2060\\u202a-\\u202e\\u2066-\\u2069\\ufeff]"},
+    {"id": "OB003", "severity": "medium", "name": "Long base64 blob (possible encoded payload)",
+     "pattern": "(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{120,}={0,2}(?![A-Za-z0-9+/])"},
+    {"id": "OB004", "severity": "medium", "name": "Decode-then-execute instruction",
+     "pattern": "(?i)\\b(decode|de-?obfuscate|reverse|rot13|from\\s*base64)\\b[^.\\n]{0,30}\\b(then|and)\\b[^.\\n]{0,20}\\b(run|execute|follow|do)\\b"},
+    {"id": "OB005", "severity": "low", "name": "Excessive homoglyph / mixed-script content",
+     "pattern": "(?i)\\b(?=[a-z]*[\\u0400-\\u04FF\\u0370-\\u03FF])[a-z\\u0400-\\u04FF\\u0370-\\u03FF]{4,}\\b"}
+  ]
+}

@@ -57,6 +57,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     pf.add_argument("--write", action="store_true", help="write *.hardened.json next to each manifest")
     pf.add_argument("--out", default=None, help="directory to write hardened manifests into")
 
+    pg = sub.add_parser("sigs", help="scan text/files against the bundled AI-threat signature library")
+    pg.add_argument("path", help="file, directory, or - for stdin")
+    pg.add_argument("--format", "-f", default="text", choices=["text", "json"])
+    pg.add_argument("--list", action="store_true", help="list the signature library instead of scanning")
+
     args = p.parse_args(argv)
     cmd = args.cmd or "audit"
 
@@ -71,6 +76,33 @@ def main(argv: Optional[List[str]] = None) -> int:
         result = audit(args.path, scan_clients=False)
         _emit(result, args.format)
         return _exit_code(result)
+
+    if cmd == "sigs":
+        from .sigs import Library, SEVERITY_ORDER
+        lib = Library()
+        if args.list:
+            for s in lib.signatures:
+                print(f"  [{s.severity:<8}] {s.id:<7} {s.category:<18} {s.atlas}/{s.owasp}  {s.name}")
+            return 0
+        if args.path == "-":
+            results = {"<stdin>": lib.scan_text(sys.stdin.read())}
+        else:
+            results = lib.scan_path(args.path)
+        if args.format == "json":
+            print(json.dumps({f: [m.to_dict() for m in ms] for f, ms in results.items() if ms}, indent=2))
+            worst = [m.signature.severity for ms in results.values() for m in ms]
+        else:
+            worst = []
+            for f, ms in results.items():
+                if not ms:
+                    continue
+                print(f"\n{f}")
+                for m in ms:
+                    s = m.signature
+                    print(f"  [{s.severity:<8}] {s.id:<7} {s.category:<16} {s.atlas}/{s.owasp}  {s.name}")
+                    worst.append(s.severity)
+            print(f"\n{len(worst)} signature match(es).")
+        return 1 if any(w in ("critical", "high") for w in worst) else 0
 
     if cmd == "fix":
         result = audit(args.path, scan_clients=False)

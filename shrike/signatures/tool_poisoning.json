@@ -1,0 +1,44 @@
+{
+  "category": "tool_poisoning",
+  "description": "Hidden instructions embedded in MCP tool descriptions / schemas, read by the model as trusted text.",
+  "atlas": "AML.T0053",
+  "owasp": "LLM01",
+  "signatures": [
+    {
+      "id": "TP001",
+      "severity": "critical",
+      "name": "Instruction to the model inside a tool description",
+      "pattern": "(?i)\\b(before|after|when)\\b[^.\\n]{0,30}\\b(calling|using|invoking)\\s+this\\s+tool\\b[^.\\n]{0,40}\\b(also|first|always|must)\\b"
+    },
+    {
+      "id": "TP002",
+      "severity": "critical",
+      "name": "Hidden directive to read/send sensitive files in description",
+      "pattern": "(?i)\\b(read|send|include|attach|forward)\\b[^.\\n]{0,30}(\\.env\\b|\\bssh\\s*key|\\bcredential|\\bapi[_\\s]?key|\\bpassword|~/\\.|id_rsa)"
+    },
+    {
+      "id": "TP003",
+      "severity": "high",
+      "name": "Do-not-tell-the-user directive",
+      "pattern": "(?i)\\b(do\\s+not|don'?t|never)\\b[^.\\n]{0,20}\\b(tell|inform|mention\\s+to|show)\\b[^.\\n]{0,15}\\b(the\\s+)?user\\b"
+    },
+    {
+      "id": "TP004",
+      "severity": "high",
+      "name": "Description carries model-directed <important>/system-like tags",
+      "pattern": "(?i)<\\s*(important|system|instructions?|secret|admin)\\s*>|\\[\\s*(system|important|do\\s+this)\\s*\\]"
+    },
+    {
+      "id": "TP005",
+      "severity": "medium",
+      "name": "Tool name impersonating a trusted/system tool",
+      "pattern": "(?i)(system|admin|internal|official|verified|trusted)[_\\-]?(tool|exec|run|command|shell)\\b"
+    },
+    {
+      "id": "TP006",
+      "severity": "high",
+      "name": "Description requests silent action / no confirmation",
+      "pattern": "(?i)\\b(silently|without\\s+(asking|confirmation|notifying)|automatically\\s+and\\s+quietly)\\b"
+    }
+  ]
+}

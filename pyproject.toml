@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "shrike-sec"
-version = "1.0.0"
+version = "1.1.0"
 description = "The autonomous security agent for your AI stack — discovers your MCP servers and agent tools, finds the vulnerabilities, and writes the fixes, on a local model."
 authors = [{name = "Cognis Digital", email = "suite@cognis.digital"}]
 license = {text = "LicenseRef-COCL-1.0"}
@@ -38,6 +38,7 @@ shrike = "shrike.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["shrike"]
+artifacts = ["shrike/signatures/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

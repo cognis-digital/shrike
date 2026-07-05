@@ -1,0 +1,68 @@
+{
+  "category": "prompt_injection",
+  "description": "Text that attempts to override, ignore, or supersede prior instructions.",
+  "atlas": "AML.T0051",
+  "owasp": "LLM01",
+  "signatures": [
+    {
+      "id": "PI001",
+      "severity": "high",
+      "name": "Ignore previous instructions",
+      "pattern": "(?i)\\b(ignore|disregard|forget)\\b[^.\\n]{0,40}\\b(previous|prior|above|earlier|all)\\b[^.\\n]{0,20}\\b(instruction|prompt|rule|context|direction)s?\\b"
+    },
+    {
+      "id": "PI002",
+      "severity": "high",
+      "name": "Override system prompt",
+      "pattern": "(?i)\\b(override|replace|supersede|bypass)\\b[^.\\n]{0,30}\\b(system|initial|original)\\b[^.\\n]{0,20}\\bprompt\\b"
+    },
+    {
+      "id": "PI003",
+      "severity": "high",
+      "name": "New instructions marker",
+      "pattern": "(?i)(^|\\n)\\s*(new|updated|real|actual)\\s+(instruction|task|directive|system message)s?\\s*[:\\-]"
+    },
+    {
+      "id": "PI004",
+      "severity": "medium",
+      "name": "You are now (role reset)",
+      "pattern": "(?i)\\byou\\s+are\\s+now\\b[^.\\n]{0,40}\\b(a|an|the)\\b[^.\\n]{0,30}\\b(assistant|model|ai|bot|persona|character)\\b"
+    },
+    {
+      "id": "PI005",
+      "severity": "high",
+      "name": "End of prompt / injected delimiter",
+      "pattern": "(?i)(-{3,}\\s*(end|stop)\\s*(of\\s*)?(prompt|instructions?|context)|\\[/?(INST|SYSTEM|/?s)\\]|<\\|?(im_start|im_end|system|endoftext)\\|?>)"
+    },
+    {
+      "id": "PI006",
+      "severity": "medium",
+      "name": "Reveal system prompt",
+      "pattern": "(?i)\\b(reveal|show|print|repeat|output|display)\\b[^.\\n]{0,30}\\b(your|the)\\b[^.\\n]{0,20}\\b(system\\s*prompt|initial\\s*instruction|hidden\\s*(prompt|rule|instruction)s?|guidelines)\\b"
+    },
+    {
+      "id": "PI007",
+      "severity": "medium",
+      "name": "Pretend / roleplay bypass framing",
+      "pattern": "(?i)\\b(pretend|imagine|act\\s+as\\s+if|let'?s\\s+say)\\b[^.\\n]{0,40}\\b(no\\s+(rules|restrictions|guidelines)|unrestricted|no\\s+longer\\s+bound)\\b"
+    },
+    {
+      "id": "PI008",
+      "severity": "high",
+      "name": "Instruction injection via 'important'/'urgent' authority",
+      "pattern": "(?i)(^|\\n)\\s*(important|urgent|attention|note to (ai|assistant|system))\\s*[:!][^\\n]{0,80}\\b(must|always|never|do not)\\b"
+    },
+    {
+      "id": "PI009",
+      "severity": "medium",
+      "name": "Developer/admin mode assertion",
+      "pattern": "(?i)\\b(developer|debug|admin|maintenance|god)\\s+mode\\b|\\bsudo\\s+mode\\b"
+    },
+    {
+      "id": "PI010",
+      "severity": "medium",
+      "name": "Claim of updated policy/permission",
+      "pattern": "(?i)\\b(policy|rules|restrictions|guidelines)\\b[^.\\n]{0,30}\\b(have|has|been)\\b[^.\\n]{0,20}\\b(updated|changed|lifted|removed|disabled)\\b"
+    }
+  ]
+}

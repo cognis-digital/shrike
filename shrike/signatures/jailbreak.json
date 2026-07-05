@@ -1,0 +1,56 @@
+{
+  "category": "jailbreak",
+  "description": "Known jailbreak framings that try to remove safety constraints.",
+  "atlas": "AML.T0054",
+  "owasp": "LLM01",
+  "signatures": [
+    {
+      "id": "JB001",
+      "severity": "high",
+      "name": "DAN (Do Anything Now)",
+      "pattern": "(?i)\\b(DAN|do\\s+anything\\s+now)\\b[^.\\n]{0,40}\\b(mode|jailbreak|no\\s+restrictions?)\\b|\\byou\\s+are\\s+DAN\\b"
+    },
+    {
+      "id": "JB002",
+      "severity": "high",
+      "name": "Unfiltered/uncensored persona demand",
+      "pattern": "(?i)\\b(unfiltered|uncensored|unrestricted|no\\s+filter|without\\s+(any\\s+)?(safety|moral|ethical))\\b[^.\\n]{0,30}\\b(response|answer|assistant|model|mode)\\b"
+    },
+    {
+      "id": "JB003",
+      "severity": "high",
+      "name": "Two-response (normal + jailbroken) trick",
+      "pattern": "(?i)\\b(two|both)\\b[^.\\n]{0,25}\\b(normal|classic|standard)\\b[^.\\n]{0,30}\\b(jailbroken|dan|developer)\\b"
+    },
+    {
+      "id": "JB004",
+      "severity": "medium",
+      "name": "Hypothetical / fiction wrapper to elicit harmful content",
+      "pattern": "(?i)\\b(in\\s+a\\s+(fictional|hypothetical)\\s+(world|scenario|story)|for\\s+(a\\s+)?(novel|screenplay|research))\\b[^.\\n]{0,60}\\b(how\\s+to|step[\\s-]by[\\s-]step|instructions?)\\b"
+    },
+    {
+      "id": "JB005",
+      "severity": "high",
+      "name": "Grandma / roleplay exploit",
+      "pattern": "(?i)\\b(my\\s+(deceased\\s+)?(grandma|grandmother)|deceased\\s+(relative|grandma|grandmother))\\b[^.\\n]{0,60}\\b(used\\s+to|would)\\b[^.\\n]{0,40}\\b(tell|read|recite|make)\\b"
+    },
+    {
+      "id": "JB006",
+      "severity": "medium",
+      "name": "Token/points coercion framing",
+      "pattern": "(?i)\\byou\\s+(have|will\\s+lose|earn)\\b[^.\\n]{0,20}\\b\\d+\\s+(tokens?|points?|lives?)\\b[^.\\n]{0,40}\\b(if|unless)\\b"
+    },
+    {
+      "id": "JB007",
+      "severity": "medium",
+      "name": "Opposite / inverted-morality persona",
+      "pattern": "(?i)\\b(opposite\\s+day|antonym\\s+mode|evil\\s+(twin|version|assistant)|do\\s+the\\s+opposite\\s+of)\\b"
+    },
+    {
+      "id": "JB008",
+      "severity": "medium",
+      "name": "Refusal suppression",
+      "pattern": "(?i)\\b(never|do\\s+not|don'?t)\\b[^.\\n]{0,20}\\b(refuse|decline|say\\s+you\\s+can'?t|apologi[sz]e|mention\\s+(policy|guidelines))\\b"
+    }
+  ]
+}
